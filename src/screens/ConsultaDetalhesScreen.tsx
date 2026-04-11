@@ -1,13 +1,7 @@
-/**
- * ConsultaDetalhesScreen - Detalhes da Consulta
- * Exibe informações completas de uma consulta específica
- */
-
 import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Alert,
@@ -21,6 +15,8 @@ import {
   obterCorStatus,
   obterTextoStatus,
 } from "../utils/formatters";
+
+import { consultaDetalhesStyles } from "../styles/consultaDetalhes.styles";
 
 type ConsultaDetalhesScreenProps = {
   navigation: any;
@@ -107,44 +103,44 @@ export default function ConsultaDetalhesScreen({
   const corStatus = obterCorStatus(consulta.status);
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <View style={consultaDetalhesStyles.container}>
+      <ScrollView contentContainerStyle={consultaDetalhesStyles.scrollContent}>
         {/* Status Badge */}
-        <View style={[styles.statusBadge, { backgroundColor: corStatus }]}>
-          <Text style={styles.statusTexto}>
+        <View style={[consultaDetalhesStyles.statusBadge, { backgroundColor: corStatus }]}>
+          <Text style={consultaDetalhesStyles.statusTexto}>
             {obterTextoStatus(consulta.status)}
           </Text>
         </View>
 
         {/* Seção Paciente */}
-        <View style={styles.secao}>
-          <Text style={styles.secaoTitulo}>👤 Paciente</Text>
-          <View style={styles.card}>
-            <Text style={styles.valor}>{consulta.pacienteNome}</Text>
+        <View style={consultaDetalhesStyles.secao}>
+          <Text style={consultaDetalhesStyles.secaoTitulo}>👤 Paciente</Text>
+          <View style={consultaDetalhesStyles.card}>
+            <Text style={consultaDetalhesStyles.valor}>{consulta.pacienteNome}</Text>
           </View>
         </View>
 
         {/* Seção Médico */}
-        <View style={styles.secao}>
-          <Text style={styles.secaoTitulo}>👨‍⚕️ Médico</Text>
-          <View style={styles.card}>
-            <Text style={styles.valor}>{consulta.medicoNome}</Text>
-            <Text style={styles.label}>{consulta.especialidade}</Text>
+        <View style={consultaDetalhesStyles.secao}>
+          <Text style={consultaDetalhesStyles.secaoTitulo}>👨‍⚕️ Médico</Text>
+          <View style={consultaDetalhesStyles.card}>
+            <Text style={consultaDetalhesStyles.valor}>{consulta.medicoNome}</Text>
+            <Text style={consultaDetalhesStyles.label}>{consulta.especialidade}</Text>
           </View>
         </View>
 
         {/* Seção Data e Hora */}
-        <View style={styles.secao}>
-          <Text style={styles.secaoTitulo}>📅 Agendamento</Text>
-          <View style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.coluna}>
-                <Text style={styles.label}>Data</Text>
-                <Text style={styles.valor}>{formatarData(consulta.data)}</Text>
+        <View style={consultaDetalhesStyles.secao}>
+          <Text style={consultaDetalhesStyles.secaoTitulo}>📅 Agendamento</Text>
+          <View style={consultaDetalhesStyles.card}>
+            <View style={consultaDetalhesStyles.row}>
+              <View style={consultaDetalhesStyles.coluna}>
+                <Text style={consultaDetalhesStyles.label}>Data</Text>
+                <Text style={consultaDetalhesStyles.valor}>{formatarData(consulta.data)}</Text>
               </View>
-              <View style={styles.coluna}>
-                <Text style={styles.label}>Horário</Text>
-                <Text style={styles.valor}>
+              <View style={consultaDetalhesStyles.coluna}>
+                <Text style={consultaDetalhesStyles.label}>Horário</Text>
+                <Text style={consultaDetalhesStyles.valor}>
                   {formatarHorario(consulta.horario)}
                 </Text>
               </View>
@@ -154,32 +150,32 @@ export default function ConsultaDetalhesScreen({
 
         {/* Seção Observações */}
         {consulta.observacoes && (
-          <View style={styles.secao}>
-            <Text style={styles.secaoTitulo}>📝 Observações</Text>
-            <View style={styles.card}>
-              <Text style={styles.observacoes}>{consulta.observacoes}</Text>
+          <View style={consultaDetalhesStyles.secao}>
+            <Text style={consultaDetalhesStyles.secaoTitulo}>📝 Observações</Text>
+            <View style={consultaDetalhesStyles.card}>
+              <Text style={consultaDetalhesStyles.observacoes}>{consulta.observacoes}</Text>
             </View>
           </View>
         )}
 
         {/* Botões de Ação */}
-        <View style={styles.acoes}>
+        <View style={consultaDetalhesStyles.acoes}>
           {consulta.status === "agendada" && (
             <TouchableOpacity
-              style={[styles.botao, styles.botaoConfirmar]}
+              style={[consultaDetalhesStyles.botao, consultaDetalhesStyles.botaoConfirmar]}
               onPress={handleConfirmar}
             >
-              <Text style={styles.botaoTexto}>✓ Confirmar Consulta</Text>
+              <Text style={consultaDetalhesStyles.botaoTexto}>✓ Confirmar Consulta</Text>
             </TouchableOpacity>
           )}
 
           {(consulta.status === "agendada" ||
             consulta.status === "confirmada") && (
             <TouchableOpacity
-              style={[styles.botao, styles.botaoCancelar]}
+              style={[consultaDetalhesStyles.botao, consultaDetalhesStyles.botaoCancelar]}
               onPress={handleCancelar}
             >
-              <Text style={styles.botaoTexto}>✕ Cancelar Consulta</Text>
+              <Text style={consultaDetalhesStyles.botaoTexto}>✕ Cancelar Consulta</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -187,87 +183,3 @@ export default function ConsultaDetalhesScreen({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  statusBadge: {
-    alignSelf: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-    marginBottom: 24,
-  },
-  statusTexto: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-    textTransform: "uppercase",
-  },
-  secao: {
-    marginBottom: 20,
-  },
-  secaoTitulo: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 12,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  row: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  coluna: {
-    flex: 1,
-  },
-  label: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 4,
-  },
-  valor: {
-    fontSize: 18,
-    color: "#333",
-    fontWeight: "600",
-  },
-  observacoes: {
-    fontSize: 16,
-    color: "#555",
-    lineHeight: 24,
-  },
-  acoes: {
-    gap: 12,
-    marginTop: 12,
-  },
-  botao: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  botaoConfirmar: {
-    backgroundColor: "#4CAF50",
-  },
-  botaoCancelar: {
-    backgroundColor: "#F44336",
-  },
-  botaoTexto: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
