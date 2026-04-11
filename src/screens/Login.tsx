@@ -1,11 +1,8 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-// Componente não utilizado na versão simplificada
+
+import { loginStyles as styles } from "../styles/login.styles";
 
 type LoginProps = {
   onLoginSuccess: (tipo: "paciente" | "admin") => void;
@@ -26,24 +23,3 @@ export default function Login({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
-    padding: 20,
-    alignItems: "center",
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 8,
-  },
-  subtitulo: {
-    fontSize: 14,
-    color: "#666",
-  },
-});
