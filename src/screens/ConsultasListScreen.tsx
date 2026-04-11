@@ -1,19 +1,15 @@
-/**
- * ConsultasListScreen - Lista de Consultas
- * Exibe todas as consultas do usuário com filtros
- */
-
 import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import { Consulta, StatusConsulta } from "../types";
 import { ConsultaCard, Loading, EmptyState } from "../components";
 import { consultasService } from "../services/consultasService";
+
+import { consultasListStyles } from "../styles/consultasList.styles";
 
 type ConsultasListScreenProps = {
   navigation: any;
@@ -76,20 +72,20 @@ export default function ConsultasListScreen({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={consultasListStyles.container}>
       {/* Filtros */}
-      <View style={styles.filtros}>
+      <View style={consultasListStyles.filtros}>
         <TouchableOpacity
           style={[
-            styles.filtro,
-            filtroAtivo === "todas" && styles.filtroAtivo,
+            consultasListStyles.filtro,
+            filtroAtivo === "todas" && consultasListStyles.filtroAtivo,
           ]}
           onPress={() => setFiltroAtivo("todas")}
         >
           <Text
             style={[
-              styles.filtroTexto,
-              filtroAtivo === "todas" && styles.filtroTextoAtivo,
+              consultasListStyles.filtroTexto,
+              filtroAtivo === "todas" && consultasListStyles.filtroTextoAtivo,
             ]}
           >
             Todas
@@ -98,15 +94,15 @@ export default function ConsultasListScreen({
 
         <TouchableOpacity
           style={[
-            styles.filtro,
-            filtroAtivo === "agendada" && styles.filtroAtivo,
+            consultasListStyles.filtro,
+            filtroAtivo === "agendada" && consultasListStyles.filtroAtivo,
           ]}
           onPress={() => setFiltroAtivo("agendada")}
         >
           <Text
             style={[
-              styles.filtroTexto,
-              filtroAtivo === "agendada" && styles.filtroTextoAtivo,
+              consultasListStyles.filtroTexto,
+              filtroAtivo === "agendada" && consultasListStyles.filtroTextoAtivo,
             ]}
           >
             Agendadas
@@ -115,15 +111,15 @@ export default function ConsultasListScreen({
 
         <TouchableOpacity
           style={[
-            styles.filtro,
-            filtroAtivo === "confirmada" && styles.filtroAtivo,
+            consultasListStyles.filtro,
+            filtroAtivo === "confirmada" && consultasListStyles.filtroAtivo,
           ]}
           onPress={() => setFiltroAtivo("confirmada")}
         >
           <Text
             style={[
-              styles.filtroTexto,
-              filtroAtivo === "confirmada" && styles.filtroTextoAtivo,
+              consultasListStyles.filtroTexto,
+              filtroAtivo === "confirmada" && consultasListStyles.filtroTextoAtivo,
             ]}
           >
             Confirmadas
@@ -144,7 +140,7 @@ export default function ConsultasListScreen({
           />
         )}
         contentContainerStyle={
-          consultasFiltradas.length === 0 && styles.emptyContainer
+          consultasFiltradas.length === 0 && consultasListStyles.emptyContainer
         }
         ListEmptyComponent={
           <EmptyState
@@ -160,38 +156,3 @@ export default function ConsultasListScreen({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  filtros: {
-    flexDirection: "row",
-    padding: 16,
-    gap: 8,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  filtro: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-  },
-  filtroAtivo: {
-    backgroundColor: "#79059C",
-  },
-  filtroTexto: {
-    fontSize: 14,
-    color: "#666",
-    fontWeight: "600",
-  },
-  filtroTextoAtivo: {
-    color: "#fff",
-  },
-  emptyContainer: {
-    flex: 1,
-  },
-});
