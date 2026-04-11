@@ -1,11 +1,8 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-// Componente não utilizado na versão simplificada
+
+import { minhasConsultasStyles } from "../styles/minhasConsultas.styles";
 
 type MinhasConsultasProps = {
   onNavigateToAgendamento: () => void;
@@ -17,33 +14,12 @@ export default function MinhasConsultas({
   onLogout,
 }: MinhasConsultasProps) {
   return (
-    <View style={styles.container}>
+    <View style={minhasConsultasStyles.container}>
       <StatusBar style="light" />
-      <View style={styles.header}>
-        <Text style={styles.titulo}>Minhas Consultas</Text>
-        <Text style={styles.subtitulo}>Componente não utilizado na versão simplificada</Text>
+      <View style={minhasConsultasStyles.header}>
+        <Text style={minhasConsultasStyles.titulo}>Minhas Consultas</Text>
+        <Text style={minhasConsultasStyles.subtitulo}>Componente não utilizado na versão simplificada</Text>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
-    padding: 20,
-    alignItems: "center",
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 8,
-  },
-  subtitulo: {
-    fontSize: 14,
-    color: "#666",
-  },
-});
