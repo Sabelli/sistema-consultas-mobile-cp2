@@ -1,25 +1,47 @@
+import { cadastroPacienteStyles as styles } from "../styles/cadastroPaciente.styles";
+
 import React from "react";
-import { View, Text } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-// Importação do estilo refatorado
-import { cadastroPacienteStyles } from "../styles/cadastroPaciente.styles";
-
 type CadastroPacienteProps = {
-  onCadastroSuccess: () => void;
-  onVoltar: () => void;
+  navigation: any;
 };
 
-export default function CadastroPaciente({
-  onCadastroSuccess,
-  onVoltar,
-}: CadastroPacienteProps) {
+export default function CadastroPaciente({ navigation }: CadastroPacienteProps) {
   return (
-    <View style={cadastroPacienteStyles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
-      <View style={cadastroPacienteStyles.header}>
-        <Text style={cadastroPacienteStyles.titulo}>📝 Cadastro de Paciente</Text>
-        <Text style={cadastroPacienteStyles.subtitulo}>Componente não utilizado na versão simplificada</Text>
+      <View style={styles.content}>
+        <Text style={styles.icone}>📝</Text>
+        <Text style={styles.titulo}>Cadastro de Paciente</Text>
+        <Text style={styles.descricao}>
+          Aqui você poderá criar sua conta no sistema
+        </Text>
+
+        <View style={styles.botoesContainer}>
+          <TouchableOpacity
+            style={[styles.botao, styles.botaoPrimario]}
+            onPress={() => {
+              // Simula cadastro bem-sucedido e redireciona para Home
+              navigation.navigate("Home");
+            }}
+          >
+            <Text style={styles.botaoTexto}>Criar Conta</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.botao, styles.botaoSecundario]}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.botaoTextoSecundario}>Voltar ao Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

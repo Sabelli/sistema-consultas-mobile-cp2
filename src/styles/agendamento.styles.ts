@@ -1,41 +1,41 @@
 import { StyleSheet } from "react-native";
 
-export const minhasConsultasStyles = StyleSheet.create({
+export const agendamentoStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f0f4f7", // Um tom levemente diferente para diferenciar as seções
     justifyContent: "center",
     padding: 20,
   },
   content: {
     backgroundColor: "#ffffff",
     borderRadius: 25,
-    padding: 30,
+    padding: 35,
     alignItems: "center",
-    // Sombra para profundidade
+    // Sombras
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowRadius: 12,
     elevation: 5,
   },
   icone: {
-    fontSize: 55,
-    marginBottom: 15,
+    fontSize: 60,
+    marginBottom: 20,
   },
   titulo: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "bold",
-    color: "#673AB7", // Roxo: associado à organização e tranquilidade
+    color: "#2E7D32", // Verde para passar sensação de saúde/agendamento
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   descricao: {
     fontSize: 16,
-    color: "#757575",
+    color: "#555",
     textAlign: "center",
-    marginBottom: 35,
-    lineHeight: 22,
+    marginBottom: 30,
+    lineHeight: 24,
   },
   botoesContainer: {
     width: "100%",
@@ -49,10 +49,10 @@ export const minhasConsultasStyles = StyleSheet.create({
     marginBottom: 12,
   },
   botaoPrimario: {
-    backgroundColor: "#673AB7",
+    backgroundColor: "#2E7D32", // Verde principal
   },
   botaoSecundario: {
-    backgroundColor: "#9C27B0", // Um tom complementar para a ação de agendar
+    backgroundColor: "#4CAF50", // Verde mais claro para consultas existentes
   },
   botaoTerciario: {
     backgroundColor: "transparent",
@@ -62,10 +62,11 @@ export const minhasConsultasStyles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "bold",
+    letterSpacing: 0.5,
   },
   botaoTextoSecundario: {
-    color: "#673AB7",
-    fontSize: 16,
+    color: "#666",
+    fontSize: 15,
     fontWeight: "600",
     textDecorationLine: "underline",
   },

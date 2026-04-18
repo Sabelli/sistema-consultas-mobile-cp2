@@ -1,24 +1,51 @@
+import { minhasConsultasStyles as styles } from "../styles/minhasConsultas.styles";
+
 import React from "react";
-import { View, Text } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-import { minhasConsultasStyles } from "../styles/minhasConsultas.styles";
-
 type MinhasConsultasProps = {
-  onNavigateToAgendamento: () => void;
-  onLogout: () => void;
+  navigation: any;
 };
 
-export default function MinhasConsultas({
-  onNavigateToAgendamento,
-  onLogout,
-}: MinhasConsultasProps) {
+export default function MinhasConsultas({ navigation }: MinhasConsultasProps) {
   return (
-    <View style={minhasConsultasStyles.container}>
+    <View style={styles.container}>
       <StatusBar style="light" />
-      <View style={minhasConsultasStyles.header}>
-        <Text style={minhasConsultasStyles.titulo}>Minhas Consultas</Text>
-        <Text style={minhasConsultasStyles.subtitulo}>Componente não utilizado na versão simplificada</Text>
+      <View style={styles.content}>
+        <Text style={styles.icone}>📅</Text>
+        <Text style={styles.titulo}>Minhas Consultas</Text>
+        <Text style={styles.descricao}>
+          Visualize todas as suas consultas médicas
+        </Text>
+
+        <View style={styles.botoesContainer}>
+          <TouchableOpacity
+            style={[styles.botao, styles.botaoPrimario]}
+            onPress={() => navigation.navigate("ConsultasList")}
+          >
+            <Text style={styles.botaoTexto}>Ver Lista de Consultas</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.botao, styles.botaoSecundario]}
+            onPress={() => navigation.navigate("Agendamento")}
+          >
+            <Text style={styles.botaoTexto}>Agendar Nova Consulta</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.botao, styles.botaoTerciario]}
+            onPress={() => navigation.navigate("Home")}
+          >
+            <Text style={styles.botaoTextoSecundario}>Voltar ao Início</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
