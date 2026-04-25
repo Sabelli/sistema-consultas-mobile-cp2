@@ -1,71 +1,85 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Button, Alert } from "react-native";
+/**
+ * Home Screen - Tela Principal do Paciente
+ * Exibe informações do usuário e acesso rápido às funcionalidades
+ */
+
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Consulta } from "../interfaces/consulta";
-import { ConsultaCard } from "../components";
-import { styles } from "../styles/app.styles";
-import { obterConsultas, salvarConsultas } from "../services/storage";
+import { useAuth } from "../contexts/AuthContext";
+import { styles } from "../styles/home.styles";
 
 export default function Home({ navigation }: any) {
-  const [consultas, setConsultas] = useState<Consulta[]>([]);
+  const { usuario, logout } = useAuth();
 
-  useEffect(() => {
-    carregarConsultas();
-  }, []);
-
-  async function carregarConsultas() {
-    const consultasSalvas = await obterConsultas();
-    setConsultas(consultasSalvas);
-  }
-
-  async function confirmarConsulta(consultaId: number) {
-    const consultasAtualizadas = consultas.map((c) =>
-      c.id === consultaId ? { ...c, status: "confirmada" as const } : c
+  async function handleLogout() {
+    Alert.alert(
+      "Sair",
+      "Deseja realmente sair da sua conta?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sair",
+          style: "destructive",
+          onPress: async () => {
+            await logout();
+          },
+        },
+      ]
     );
-    setConsultas(consultasAtualizadas);
-    await salvarConsultas(consultasAtualizadas);
-  }
-
-  async function cancelarConsulta(consultaId: number) {
-    const consultasAtualizadas = consultas.map((c) =>
-      c.id === consultaId ? { ...c, status: "cancelada" as const } : c
-    );
-    setConsultas(consultasAtualizadas);
-    await salvarConsultas(consultasAtualizadas);
   }
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.titulo}>Minhas Consultas</Text>
-          <Text style={styles.subtitulo}>
-            {consultas.length} consulta(s) agendada(s)
-          </Text>
-        </View>
+      
+      <View style={styles.header}>
+        <Text style={styles.icone}>👋</Text>
+        <Text style={styles.titulo}>Olá, {usuario?.nome}!</Text>
+        <Text style={styles.subtitulo}>O que deseja fazer hoje?</Text>
+      </View>
 
-        {consultas.length === 0 ? (
-          <View style={{ padding: 20, alignItems: "center" }}>
-            <Text style={{ color: "#666", marginBottom: 20 }}>
-              Nenhuma consulta agendada ainda
-            </Text>
-            <Button
-              title="Ir para Admin"
-              onPress={() => navigation.navigate("Admin")}
-            />
-          </View>
-        ) : (
-          consultas.map((consulta) => (
-            <ConsultaCard
-              key={consulta.id}
-              consulta={consulta}
-              onConfirmar={() => confirmarConsulta(consulta.id)}
-              onCancelar={() => cancelarConsulta(consulta.id)}
-            />
-          ))
-        )}
+      <View style={styles.menuContainer}>
+        <TouchableOpacity
+          style={[styles.menuItem, { backgroundColor: "#79059C" }]}
+          onPress={() => navigation.navigate("MinhasConsultas")}
+        >
+          <Text style={styles.menuIcone}>📅</Text>
+          <Text style={styles.menuTitulo}>Minhas Consultas</Text>
+          <Text style={styles.menuDescricao}>Ver e gerenciar suas consultas</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.menuItem, { backgroundColor: "#4CAF50" }]}
+          onPress={() => navigation.navigate("Agendamento")}
+        >
+          <Text style={styles.menuIcone}>➕</Text>
+          <Text style={styles.menuTitulo}>Agendar Consulta</Text>
+          <Text style={styles.menuDescricao}>Marcar nova consulta médica</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.menuItem, { backgroundColor: "#FF9800" }]}
+          onPress={() => navigation.navigate("ConsultasList")}
+        >
+          <Text style={styles.menuIcone}>📋</Text>
+          <Text style={styles.menuTitulo}>Histórico</Text>
+          <Text style={styles.menuDescricao}>Ver todas as suas consultas</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutText}>🚪 Sair da Conta</Text>
+      </TouchableOpacity>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Sistema de Consultas Médicas</Text>
+        <Text style={styles.footerSubtext}>FIAP - 2TDSPO</Text>
+      </View>
       </ScrollView>
     </View>
   );

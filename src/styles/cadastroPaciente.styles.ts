@@ -1,71 +1,72 @@
 import { StyleSheet } from "react-native";
 
-export const cadastroPacienteStyles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center", // Centraliza o conteúdo verticalmente
-    padding: 20,
+    backgroundColor: "#79059C",
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   content: {
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    padding: 30,
-    // Sombra para iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    // Sombra para Android
-    elevation: 5,
-  },
-  icone: {
-    fontSize: 50,
-    marginBottom: 20,
-  },
-  titulo: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#2196F3",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  descricao: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 30,
-    lineHeight: 22,
-  },
-  botoesContainer: {
-    width: "100%",
-    gap: 12, // Espaçamento entre os botões (disponível em versões recentes do RN)
-  },
-  botao: {
-    width: "100%",
-    height: 55,
-    borderRadius: 12,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10, // Backup caso o 'gap' não funcione na sua versão
+    padding: 32,
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+  icone: {
+    fontSize: 80,
+    marginBottom: 24,
+  },
+  titulo: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 8,
+  },
+  subtitulo: {
+    fontSize: 16,
+    color: "#fff",
+    opacity: 0.9,
+    marginBottom: 32,
+  },
+  formContainer: {
+    width: "100%",
+    gap: 16,
+  },
+  input: {
+    backgroundColor: "#fff",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    fontSize: 16,
+    color: "#333",
+  },
+  botao: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    alignItems: "center",
   },
   botaoPrimario: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#fff",
+    marginTop: 8,
   },
   botaoSecundario: {
     backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#2196F3",
+    borderWidth: 2,
+    borderColor: "#fff",
   },
   botaoTexto: {
-    color: "#fff",
-    fontSize: 16,
+    color: "#79059C",
     fontWeight: "bold",
+    fontSize: 16,
   },
   botaoTextoSecundario: {
-    color: "#2196F3",
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-    fontWeight: "600",
   },
 });

@@ -1,15 +1,24 @@
+/**
+ * ConsultasListScreen - Lista de Consultas
+ * Exibe consultas filtradas por usuário (paciente vê só suas, admin vê todas)
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
+  StyleSheet,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
+  Alert,
 } from "react-native";
-import { Consulta, StatusConsulta } from "../types";
+import { useAuth } from "../contexts/AuthContext";
+import consultasService from "../services/consultasService";
+import { Consulta } from "../interfaces/consulta";
+import { StatusConsulta } from "../types/statusConsulta";
 import { ConsultaCard, Loading, EmptyState } from "../components";
-import { consultasService } from "../services/consultasService";
-
-import { consultasListStyles } from "../styles/consultasList.styles";
+import {styles} from "../styles/consultasList.styles"
 
 type ConsultasListScreenProps = {
   navigation: any;
@@ -18,11 +27,11 @@ type ConsultasListScreenProps = {
 export default function ConsultasListScreen({
   navigation,
 }: ConsultasListScreenProps) {
+  const { usuario, isAdmin } = useAuth();
   const [consultas, setConsultas] = useState<Consulta[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtroAtivo, setFiltroAtivo] = useState<StatusConsulta | "todas">(
-    "todas"
-  );
+  const [refreshing, setRefreshing] = useState(false);
+  const [filtroAtivo, setFiltroAtivo] = useState<StatusConsulta | "todas">("todas");
 
   useEffect(() => {
     carregarConsultas();
@@ -31,31 +40,57 @@ export default function ConsultasListScreen({
   async function carregarConsultas() {
     setLoading(true);
     try {
-      const dados = await consultasService.listarConsultas();
+      // Carrega consultas filtradas por usuário
+      const dados = await consultasService.listarConsultas(
+        usuario?.id,
+        isAdmin()
+      );
       setConsultas(dados);
     } catch (error) {
       console.error("Erro ao carregar consultas:", error);
+      Alert.alert("Erro", "Não foi possível carregar as consultas");
     } finally {
       setLoading(false);
     }
   }
 
+  async function onRefresh() {
+    setRefreshing(true);
+    await carregarConsultas();
+    setRefreshing(false);
+  }
+
   async function handleConfirmar(id: number) {
     try {
-      await consultasService.confirmarConsulta(id);
+      await consultasService.confirmarConsulta(id, usuario?.id, isAdmin());
+      Alert.alert("Sucesso", "Consulta confirmada!");
       carregarConsultas();
-    } catch (error) {
-      console.error("Erro ao confirmar consulta:", error);
+    } catch (error: any) {
+      Alert.alert("Erro", error.message || "Erro ao confirmar consulta");
     }
   }
 
   async function handleCancelar(id: number) {
-    try {
-      await consultasService.cancelarConsulta(id);
-      carregarConsultas();
-    } catch (error) {
-      console.error("Erro ao cancelar consulta:", error);
-    }
+    Alert.alert(
+      "Cancelar Consulta",
+      "Deseja realmente cancelar esta consulta?",
+      [
+        { text: "Não", style: "cancel" },
+        {
+          text: "Sim, cancelar",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await consultasService.cancelarConsulta(id, usuario?.id, isAdmin());
+              Alert.alert("Sucesso", "Consulta cancelada");
+              carregarConsultas();
+            } catch (error: any) {
+              Alert.alert("Erro", error.message || "Erro ao cancelar consulta");
+            }
+          },
+        },
+      ]
+    );
   }
 
   function handleDetalhes(id: number) {
@@ -72,20 +107,30 @@ export default function ConsultasListScreen({
   }
 
   return (
-    <View style={consultasListStyles.container}>
+    <View style={styles.container}>
+      {/* Header com Info do Usuário */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>
+          {isAdmin() ? "📋 Todas as Consultas" : "📋 Minhas Consultas"}
+        </Text>
+        <Text style={styles.headerSubtitle}>
+          {consultasFiltradas.length} consulta(s) encontrada(s)
+        </Text>
+      </View>
+
       {/* Filtros */}
-      <View style={consultasListStyles.filtros}>
+      <View style={styles.filtros}>
         <TouchableOpacity
           style={[
-            consultasListStyles.filtro,
-            filtroAtivo === "todas" && consultasListStyles.filtroAtivo,
+            styles.filtro,
+            filtroAtivo === "todas" && styles.filtroAtivo,
           ]}
           onPress={() => setFiltroAtivo("todas")}
         >
           <Text
             style={[
-              consultasListStyles.filtroTexto,
-              filtroAtivo === "todas" && consultasListStyles.filtroTextoAtivo,
+              styles.filtroTexto,
+              filtroAtivo === "todas" && styles.filtroTextoAtivo,
             ]}
           >
             Todas
@@ -94,15 +139,15 @@ export default function ConsultasListScreen({
 
         <TouchableOpacity
           style={[
-            consultasListStyles.filtro,
-            filtroAtivo === "agendada" && consultasListStyles.filtroAtivo,
+            styles.filtro,
+            filtroAtivo === "agendada" && styles.filtroAtivo,
           ]}
           onPress={() => setFiltroAtivo("agendada")}
         >
           <Text
             style={[
-              consultasListStyles.filtroTexto,
-              filtroAtivo === "agendada" && consultasListStyles.filtroTextoAtivo,
+              styles.filtroTexto,
+              filtroAtivo === "agendada" && styles.filtroTextoAtivo,
             ]}
           >
             Agendadas
@@ -111,15 +156,15 @@ export default function ConsultasListScreen({
 
         <TouchableOpacity
           style={[
-            consultasListStyles.filtro,
-            filtroAtivo === "confirmada" && consultasListStyles.filtroAtivo,
+            styles.filtro,
+            filtroAtivo === "confirmada" && styles.filtroAtivo,
           ]}
           onPress={() => setFiltroAtivo("confirmada")}
         >
           <Text
             style={[
-              consultasListStyles.filtroTexto,
-              filtroAtivo === "confirmada" && consultasListStyles.filtroTextoAtivo,
+              styles.filtroTexto,
+              filtroAtivo === "confirmada" && styles.filtroTextoAtivo,
             ]}
           >
             Confirmadas
@@ -128,31 +173,33 @@ export default function ConsultasListScreen({
       </View>
 
       {/* Lista de Consultas */}
-      <FlatList
-        data={consultasFiltradas}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ConsultaCard
-            consulta={item}
-            onConfirmar={handleConfirmar}
-            onCancelar={handleCancelar}
-            onDetalhes={handleDetalhes}
-          />
-        )}
-        contentContainerStyle={
-          consultasFiltradas.length === 0 && consultasListStyles.emptyContainer
-        }
-        ListEmptyComponent={
-          <EmptyState
-            mensagem={
-              filtroAtivo === "todas"
-                ? "Você ainda não possui consultas"
-                : `Nenhuma consulta ${filtroAtivo}`
-            }
-            icone="📅"
-          />
-        }
-      />
+      {consultasFiltradas.length === 0 ? (
+        <EmptyState
+          icone="📅"
+          mensagem={
+            filtroAtivo === "todas"
+              ? "Nenhuma consulta encontrada"
+              : `Nenhuma consulta ${filtroAtivo}`
+          }
+        />
+      ) : (
+        <FlatList
+          data={consultasFiltradas}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <ConsultaCard
+              consulta={item}
+              onConfirmar={() => handleConfirmar(item.id)}
+              onCancelar={() => handleCancelar(item.id)}
+              onDetalhes={() => handleDetalhes(item.id)}
+            />
+          )}
+          contentContainerStyle={styles.lista}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
     </View>
   );
 }

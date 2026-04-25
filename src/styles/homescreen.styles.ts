@@ -6,12 +6,11 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   scrollContent: {
-    flexGrow: 1,
+    padding: 20,
+    paddingBottom: 40,
   },
   header: {
-    backgroundColor: "#79059C",
-    padding: 32,
-    paddingTop: 48,
+    marginBottom: 32,
     alignItems: "center",
   },
   icone: {
@@ -21,41 +20,47 @@ export const styles = StyleSheet.create({
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#79059C",
     marginBottom: 8,
   },
   subtitulo: {
     fontSize: 16,
-    color: "#fff",
-    opacity: 0.9,
+    color: "#666",
   },
-  menuContainer: {
-    padding: 20,
+  menu: {
     gap: 16,
   },
-  menuItem: {
+  card: {
     padding: 24,
     borderRadius: 16,
-    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
     elevation: 3,
   },
-  menuIcone: {
-    fontSize: 40,
+  cardPrimario: {
+    backgroundColor: "#79059C",
+  },
+  cardSecundario: {
+    backgroundColor: "#4CAF50",
+  },
+  cardTerciario: {
+    backgroundColor: "#FF9800",
+  },
+  cardIcone: {
+    fontSize: 48,
     marginBottom: 12,
   },
-  menuTitulo: {
+  cardTitulo: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  menuDescricao: {
+  cardDescricao: {
     fontSize: 14,
     color: "#fff",
     opacity: 0.9,
   },
   logoutButton: {
-    margin: 20,
     marginTop: 32,
     padding: 16,
     backgroundColor: "#fff",
@@ -70,7 +75,8 @@ export const styles = StyleSheet.create({
     fontSize: 16,
   },
   footer: {
-    padding: 20,
+    marginTop: 24,
+    paddingTop: 20,
     alignItems: "center",
   },
   footerText: {
@@ -80,5 +86,6 @@ export const styles = StyleSheet.create({
   footerSubtext: {
     fontSize: 10,
     color: "#999",
+    marginTop: 4,
   },
 });

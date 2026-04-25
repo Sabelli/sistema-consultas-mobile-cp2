@@ -1,260 +1,169 @@
+/**
+ * Admin Screen - Painel Administrativo
+ * Gerenciamento completo do sistema (apenas admin)
+ */
+
 import React, { useState, useEffect } from "react";
+import { styles } from "../styles/admin.styles";
 import {
   View,
   Text,
-  TextInput,
-  Button,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
   Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import {
-  obterEspecialidades,
-  obterMedicos,
-  salvarEspecialidades,
-  salvarMedicos,
-  obterConsultas,
-  salvarConsultas,
-} from "../services/storage";
-import { Especialidade } from "../types/especialidade";
-import { Medico } from "../interfaces/medico";
-import { Paciente } from "../types/paciente";
+import { useAuth } from "../contexts/AuthContext";
+import consultasService from "../services/consultasService";
 import { Consulta } from "../interfaces/consulta";
 
 export default function Admin({ navigation }: any) {
-  // Estados para especialidade
-  const [nomeEsp, setNomeEsp] = useState("");
-  const [descEsp, setDescEsp] = useState("");
-  const [especialidades, setEspecialidades] = useState<Especialidade[]>([]);
-
-  // Estados para médico
-  const [nomeMed, setNomeMed] = useState("");
-  const [crmMed, setCrmMed] = useState("");
-  const [medicos, setMedicos] = useState<Medico[]>([]);
-
-  // Estados para consulta de teste
-  const [nomePac, setNomePac] = useState("");
-  const [dataConsulta, setDataConsulta] = useState("");
+  const { usuario, logout } = useAuth();
+  const [consultas, setConsultas] = useState<Consulta[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    carregarDados();
+    carregarConsultas();
   }, []);
 
-  async function carregarDados() {
-    const esps = await obterEspecialidades();
-    const meds = await obterMedicos();
-    setEspecialidades(esps);
-    setMedicos(meds);
+  async function carregarConsultas() {
+    try {
+      // Admin vê todas as consultas
+      const todasConsultas = await consultasService.listarConsultas(
+        usuario?.id,
+        true // isAdmin
+      );
+      setConsultas(todasConsultas);
+    } catch (error) {
+      console.error("Erro ao carregar consultas:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function adicionarEspecialidade() {
-    if (!nomeEsp || !descEsp) {
-      Alert.alert("Erro", "Preencha nome e descrição");
-      return;
+  async function handleLogout() {
+    console.log("� ADMIN: Iniciando logout...");
+    try {
+      await logout();
+      console.log("✅ ADMIN: Logout concluído com sucesso");
+    } catch (error) {
+      console.error("❌ ADMIN: Erro no logout:", error);
+      Alert.alert("Erro", "Não foi possível sair da conta. Tente novamente.");
     }
-
-    const novaEsp: Especialidade = {
-      id: especialidades.length + 1,
-      nome: nomeEsp,
-      descricao: descEsp,
-    };
-
-    const novasEsps = [...especialidades, novaEsp];
-    setEspecialidades(novasEsps);
-    salvarEspecialidades(novasEsps);
-
-    setNomeEsp("");
-    setDescEsp("");
-    Alert.alert("Sucesso", "Especialidade adicionada!");
   }
 
-  function adicionarMedico() {
-    if (!nomeMed || !crmMed) {
-      Alert.alert("Erro", "Preencha nome e CRM");
-      return;
+  function getStatusColor(status: string) {
+    switch (status) {
+      case "agendada":
+        return "#2196F3";
+      case "confirmada":
+        return "#4CAF50";
+      case "realizada":
+        return "#9C27B0";
+      case "cancelada":
+        return "#f44336";
+      default:
+        return "#666";
     }
-
-    if (especialidades.length === 0) {
-      Alert.alert("Erro", "Adicione uma especialidade primeiro!");
-      return;
-    }
-
-    const novoMed: Medico = {
-      id: medicos.length + 1,
-      nome: nomeMed,
-      crm: crmMed,
-      especialidade: especialidades[0], // Usa a primeira especialidade
-      ativo: true,
-    };
-
-    const novosMeds = [...medicos, novoMed];
-    setMedicos(novosMeds);
-    salvarMedicos(novosMeds);
-
-    setNomeMed("");
-    setCrmMed("");
-    Alert.alert("Sucesso", "Médico adicionado!");
   }
 
-  async function criarConsultaTeste() {
-    if (!nomePac || !dataConsulta) {
-      Alert.alert("Erro", "Preencha nome do paciente e data");
-      return;
+  function getStatusEmoji(status: string) {
+    switch (status) {
+      case "agendada":
+        return "📅";
+      case "confirmada":
+        return "✅";
+      case "realizada":
+        return "🏥";
+      case "cancelada":
+        return "❌";
+      default:
+        return "❓";
     }
-
-    if (medicos.length === 0) {
-      Alert.alert("Erro", "Adicione um médico primeiro!");
-      return;
-    }
-
-    const pacienteTeste: Paciente = {
-      id: 1,
-      nome: nomePac,
-      cpf: "123.456.789-00",
-      email: "paciente@email.com",
-      telefone: "(11) 98765-4321",
-    };
-
-    const [dia, mes, ano] = dataConsulta.split("/");
-    const data = new Date(Number(ano), Number(mes) - 1, Number(dia));
-
-    const novaConsulta: Consulta = {
-      id: Date.now(),
-      medico: medicos[0],
-      paciente: pacienteTeste,
-      data: data,
-      valor: 350,
-      status: "agendada",
-      observacoes: "Consulta de teste",
-    };
-
-    const consultasAtuais = await obterConsultas();
-    await salvarConsultas([...consultasAtuais, novaConsulta]);
-
-    setNomePac("");
-    setDataConsulta("");
-    Alert.alert("Sucesso", "Consulta criada! Volte para Home", [
-      { text: "OK", onPress: () => navigation.navigate("Home") },
-    ]);
   }
+
+  const consultasAgendadas = consultas.filter((c) => c.status === "agendada").length;
+  const consultasConfirmadas = consultas.filter((c) => c.status === "confirmada").length;
+  const consultasRealizadas = consultas.filter((c) => c.status === "realizada").length;
+  const consultasCanceladas = consultas.filter((c) => c.status === "cancelada").length;
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      <ScrollView style={styles.content}>
-        {/* Seção Especialidades */}
-        <View style={styles.secao}>
-          <Text style={styles.titulo}>1. Adicionar Especialidade</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nome da especialidade"
-            value={nomeEsp}
-            onChangeText={setNomeEsp}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Descrição"
-            value={descEsp}
-            onChangeText={setDescEsp}
-          />
-          <Button title="Adicionar Especialidade" onPress={adicionarEspecialidade} />
+      
+      <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.icone}>👨‍💼</Text>
+          <Text style={styles.titulo}>Painel Admin</Text>
+          <Text style={styles.subtitulo}>Bem-vindo, {usuario?.nome}</Text>
+        </View>
 
-          <View style={styles.lista}>
-            {especialidades.map((esp) => (
-              <Text key={esp.id} style={styles.item}>
-                • {esp.nome} - {esp.descricao}
-              </Text>
-            ))}
+        {/* Dashboard de Estatísticas */}
+        <View style={styles.statsContainer}>
+          <Text style={styles.sectionTitle}>📊 Estatísticas</Text>
+          
+          <View style={styles.statsGrid}>
+            <View style={[styles.statCard, { backgroundColor: "#2196F3" }]}>
+              <Text style={styles.statNumber}>{consultasAgendadas}</Text>
+              <Text style={styles.statLabel}>Agendadas</Text>
+            </View>
+
+            <View style={[styles.statCard, { backgroundColor: "#4CAF50" }]}>
+              <Text style={styles.statNumber}>{consultasConfirmadas}</Text>
+              <Text style={styles.statLabel}>Confirmadas</Text>
+            </View>
+
+            <View style={[styles.statCard, { backgroundColor: "#9C27B0" }]}>
+              <Text style={styles.statNumber}>{consultasRealizadas}</Text>
+              <Text style={styles.statLabel}>Realizadas</Text>
+            </View>
+
+            <View style={[styles.statCard, { backgroundColor: "#f44336" }]}>
+              <Text style={styles.statNumber}>{consultasCanceladas}</Text>
+              <Text style={styles.statLabel}>Canceladas</Text>
+            </View>
           </View>
         </View>
 
-        {/* Seção Médicos */}
-        <View style={styles.secao}>
-          <Text style={styles.titulo}>2. Adicionar Médico</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nome do médico"
-            value={nomeMed}
-            onChangeText={setNomeMed}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="CRM"
-            value={crmMed}
-            onChangeText={setCrmMed}
-          />
-          <Button title="Adicionar Médico" onPress={adicionarMedico} />
+        {/* Menu de Ações */}
+        <View style={styles.menuContainer}>
+          <Text style={styles.sectionTitle}>🔧 Ações Rápidas</Text>
 
-          <View style={styles.lista}>
-            {medicos.map((med) => (
-              <Text key={med.id} style={styles.item}>
-                • {med.nome} ({med.crm}) - {med.especialidade.nome}
-              </Text>
-            ))}
-          </View>
+          <TouchableOpacity
+            style={[styles.menuItem, { backgroundColor: "#79059C" }]}
+            onPress={() => navigation.navigate("ConsultasList")}
+          >
+            <Text style={styles.menuIcone}>📋</Text>
+            <Text style={styles.menuTitulo}>Ver Todas Consultas</Text>
+            <Text style={styles.menuDescricao}>
+              {consultas.length} consulta(s) no sistema
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.menuItem, { backgroundColor: "#4CAF50" }]}
+            onPress={() => navigation.navigate("NovaConsulta")}
+          >
+            <Text style={styles.menuIcone}>➕</Text>
+            <Text style={styles.menuTitulo}>Nova Consulta</Text>
+            <Text style={styles.menuDescricao}>Agendar consulta para paciente</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Seção Consulta  Teste */}
-        <View style={styles.secao}>
-          <Text style={styles.titulo}>3. Criar Consulta de Teste</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nome do paciente"
-            value={nomePac}
-            onChangeText={setNomePac}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Data (DD/MM/AAAA)"
-            value={dataConsulta}
-            onChangeText={setDataConsulta}
-          />
-          <Button title="Criar Consulta" onPress={criarConsultaTeste} />
-        </View>
+        {/* Botão de Logout */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
+          <Text style={styles.logoutText}>🚪 Sair da Conta Admin</Text>
+        </TouchableOpacity>
 
-        <View style={{ height: 40 }} />
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Sistema de Consultas Médicas</Text>
+          <Text style={styles.footerSubtext}>Painel Administrativo - FIAP</Text>
+        </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  secao: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 8,
-    marginBottom: 20,
-  },
-  titulo: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 15,
-  },
-  input: {
-    backgroundColor: "#f5f5f5",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 10,
-    fontSize: 16,
-  },
-  lista: {
-    marginTop: 15,
-  },
-  item: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
-  },
-});

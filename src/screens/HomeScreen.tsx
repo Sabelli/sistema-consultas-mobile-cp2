@@ -1,72 +1,98 @@
+/**
+ * HomeScreen - Tela Principal do Paciente
+ * Exibe resumo e menu de navegação com autenticação
+ */
+
 import React from "react";
+import { styles } from "../styles/homescreen.styles";
 import {
   View,
   Text,
+  StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
-
-import { homeStyles } from "../styles/home.styles";
+import { useAuth } from "../contexts/AuthContext";
 
 type HomeScreenProps = {
   navigation: any;
 };
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
+  const { usuario, logout } = useAuth();
+
+  console.log("🏠 HomeScreen renderizado - Usuario:", usuario?.nome);
+
+  async function handleLogout() {
+    console.log("� Iniciando logout...");
+    try {
+      await logout();
+      console.log("✅ Logout concluído com sucesso");
+    } catch (error) {
+      console.error("❌ Erro no logout:", error);
+      Alert.alert("Erro", "Não foi possível sair da conta. Tente novamente.");
+    }
+  }
+
   return (
-    <View style={homeStyles.container}>
-      <ScrollView contentContainerStyle={homeStyles.scrollContent}>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Cabeçalho */}
-        <View style={homeStyles.header}>
-          <Text style={homeStyles.titulo}>Sistema de Consultas</Text>
-          <Text style={homeStyles.subtitulo}>Bem-vindo ao sistema!</Text>
+        <View style={styles.header}>
+          <Text style={styles.icone}>👋</Text>
+          <Text style={styles.titulo}>Olá, {usuario?.nome}!</Text>
+          <Text style={styles.subtitulo}>O que deseja fazer hoje?</Text>
         </View>
 
         {/* Cards de Navegação */}
-        <View style={homeStyles.menu}>
+        <View style={styles.menu}>
           <TouchableOpacity
-            style={[homeStyles.card, homeStyles.cardPrimario]}
-            onPress={() => navigation.navigate("ConsultasList")}
+            style={[styles.card, styles.cardPrimario]}
+            onPress={() => navigation.navigate("MinhasConsultas")}
           >
-            <Text style={homeStyles.cardIcone}>📅</Text>
-            <Text style={homeStyles.cardTitulo}>Minhas Consultas</Text>
-            <Text style={homeStyles.cardDescricao}>
+            <Text style={styles.cardIcone}>📅</Text>
+            <Text style={styles.cardTitulo}>Minhas Consultas</Text>
+            <Text style={styles.cardDescricao}>
               Visualize e gerencie suas consultas
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[homeStyles.card, homeStyles.cardSecundario]}
-            onPress={() => navigation.navigate("NovaConsulta")}
+            style={[styles.card, styles.cardSecundario]}
+            onPress={() => navigation.navigate("Agendamento")}
           >
-            <Text style={homeStyles.cardIcone}>➕</Text>
-            <Text style={homeStyles.cardTitulo}>Agendar Consulta</Text>
-            <Text style={homeStyles.cardDescricao}>
+            <Text style={styles.cardIcone}>➕</Text>
+            <Text style={styles.cardTitulo}>Agendar Consulta</Text>
+            <Text style={styles.cardDescricao}>
               Agende uma nova consulta médica
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[homeStyles.card, homeStyles.cardTerciario]}
-            onPress={() => {}}
+            style={[styles.card, styles.cardTerciario]}
+            onPress={() => navigation.navigate("ConsultasList")}
           >
-            <Text style={homeStyles.cardIcone}>👤</Text>
-            <Text style={homeStyles.cardTitulo}>Meu Perfil</Text>
-            <Text style={homeStyles.cardDescricao}>
-              Visualize e edite seus dados
+            <Text style={styles.cardIcone}>📋</Text>
+            <Text style={styles.cardTitulo}>Histórico</Text>
+            <Text style={styles.cardDescricao}>
+              Ver todas as suas consultas
             </Text>
           </TouchableOpacity>
+        </View>
 
-          <TouchableOpacity
-            style={[homeStyles.card, homeStyles.cardQuaternario]}
-            onPress={() => {}}
-          >
-            <Text style={homeStyles.cardIcone}>⚙️</Text>
-            <Text style={homeStyles.cardTitulo}>Configurações</Text>
-            <Text style={homeStyles.cardDescricao}>
-              Ajuste as preferências do app
-            </Text>
-          </TouchableOpacity>
+        {/* Botão de Logout */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={handleLogout}
+        >
+          <Text style={styles.logoutText}>🚪 Sair da Conta</Text>
+        </TouchableOpacity>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Sistema de Consultas Médicas</Text>
+          <Text style={styles.footerSubtext}>FIAP - 2TDSPO</Text>
         </View>
       </ScrollView>
     </View>

@@ -1,6 +1,15 @@
-import React from "react";
+/**
+ * Navigation - Configuração de Rotas com Autenticação
+ * Define a navegação do aplicativo usando React Navigation
+ * Controla acesso baseado no perfil do usuário (admin/paciente)
+ */
+
+import React, { useEffect } from "react";
+import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuth } from "../contexts/AuthContext";
+import { styles } from "../styles/navigationindex.styles";
 import {
   HomeScreen,
   ConsultasListScreen,
@@ -29,10 +38,32 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation() {
+  const { usuario, loading, logout } = useAuth();
+
+  // Log mudanças no estado de autenticação
+  useEffect(() => {
+    if (!loading) {
+      if (usuario) {
+        console.log("🔐 Navigation: Usuário logado ->", usuario.nome, `(${usuario.perfil})`);
+      } else {
+        console.log("🔓 Navigation: Nenhum usuário logado - Mostrando tela de Login");
+      }
+    }
+  }, [usuario, loading]);
+
+  // Mostra loading enquanto verifica autenticação
+  if (loading) {
+    console.log("⏳ Navigation: Carregando estado de autenticação...");
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#79059C" />
+      </View>
+    );
+  }
+
   return (
-    <NavigationContainer>
+    <NavigationContainer key={usuario ? usuario.id.toString() : "guest"}>
       <Stack.Navigator
-        initialRouteName="Login"
         screenOptions={{
           headerStyle: {
             backgroundColor: "#79059C",
@@ -41,90 +72,120 @@ export default function Navigation() {
           headerTitleStyle: {
             fontWeight: "bold",
           },
+          headerRight: () => (
+            usuario ? (
+              <View style={styles.headerRight}>
+                <View style={styles.userBadge}>
+                  <View style={styles.userInfo}>
+                    <Text style={styles.userName}>
+                      {usuario.perfil === "admin" ? "👨‍💼" : "👤"} {usuario.nome}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            ) : null
+          ),
         }}
       >
-        {/* Tela de Login - Ponto de entrada */}
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            title: "Login",
-            headerShown: false,
-          }}
-        />
-
-        {/* Tela Principal - Home */}
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: "Sistema de Consultas",
-            headerShown: true,
-          }}
-        />
-
-        {/* Lista de Consultas */}
-        <Stack.Screen
-          name="ConsultasList"
-          component={ConsultasListScreen}
-          options={{
-            title: "Minhas Consultas",
-          }}
-        />
-
-        {/* Detalhes de uma Consulta Específica */}
-        <Stack.Screen
-          name="ConsultaDetalhes"
-          component={ConsultaDetalhesScreen}
-          options={{
-            title: "Detalhes da Consulta",
-          }}
-        />
-
-        {/* Agendar Nova Consulta */}
-        <Stack.Screen
-          name="NovaConsulta"
-          component={NovaConsultaScreen}
-          options={{
-            title: "Agendar Consulta",
-          }}
-        />
-
-        {/* Cadastro de Paciente */}
-        <Stack.Screen
-          name="CadastroPaciente"
-          component={CadastroPacienteScreen}
-          options={{
-            title: "Cadastro de Paciente",
-          }}
-        />
-
-        {/* Minhas Consultas (Alternativa) */}
-        <Stack.Screen
-          name="MinhasConsultas"
-          component={MinhasConsultasScreen}
-          options={{
-            title: "Minhas Consultas",
-          }}
-        />
-
-        {/* Painel Administrativo */}
-        <Stack.Screen
-          name="Admin"
-          component={AdminScreen}
-          options={{
-            title: "Painel Admin",
-          }}
-        />
-
-        {/* Agendamento de Consultas */}
-        <Stack.Screen
-          name="Agendamento"
-          component={AgendamentoScreen}
-          options={{
-            title: "Agendamento",
-          }}
-        />
+        {!usuario ? (
+          // Usuário NÃO autenticado - apenas Login e Cadastro
+          <>
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{
+                title: "Login",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="CadastroPaciente"
+              component={CadastroPacienteScreen}
+              options={{
+                title: "Criar Conta",
+                headerShown: false,
+              }}
+            />
+          </>
+        ) : usuario.perfil === "admin" ? (
+          // Usuário ADMIN - acesso total
+          <>
+            <Stack.Screen
+              name="Admin"
+              component={AdminScreen}
+              options={{
+                title: "Painel Administrativo",
+              }}
+            />
+            <Stack.Screen
+              name="ConsultasList"
+              component={ConsultasListScreen}
+              options={{
+                title: "Todas as Consultas",
+              }}
+            />
+            <Stack.Screen
+              name="ConsultaDetalhes"
+              component={ConsultaDetalhesScreen}
+              options={{
+                title: "Detalhes da Consulta",
+              }}
+            />
+            <Stack.Screen
+              name="NovaConsulta"
+              component={NovaConsultaScreen}
+              options={{
+                title: "Nova Consulta",
+              }}
+            />
+          </>
+        ) : (
+          // Usuário PACIENTE - acesso limitado
+          <>
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                title: "Sistema de Consultas",
+              }}
+            />
+            <Stack.Screen
+              name="MinhasConsultas"
+              component={MinhasConsultasScreen}
+              options={{
+                title: "Minhas Consultas",
+              }}
+            />
+            <Stack.Screen
+              name="ConsultasList"
+              component={ConsultasListScreen}
+              options={{
+                title: "Minhas Consultas",
+              }}
+            />
+            <Stack.Screen
+              name="ConsultaDetalhes"
+              component={ConsultaDetalhesScreen}
+              options={{
+                title: "Detalhes da Consulta",
+              }}
+            />
+            <Stack.Screen
+              name="NovaConsulta"
+              component={NovaConsultaScreen}
+              options={{
+                title: "Agendar Consulta",
+              }}
+            />
+            <Stack.Screen
+              name="Agendamento"
+              component={AgendamentoScreen}
+              options={{
+                title: "Agendamento",
+              }}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

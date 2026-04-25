@@ -5,13 +5,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  scrollContent: {
-    flexGrow: 1,
-  },
   header: {
     backgroundColor: "#79059C",
     padding: 32,
-    paddingTop: 48,
+    paddingTop: 16,
     alignItems: "center",
   },
   icone: {
@@ -29,14 +26,50 @@ export const styles = StyleSheet.create({
     color: "#fff",
     opacity: 0.9,
   },
+  statsContainer: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  statsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    minWidth: "45%",
+    padding: 20,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  statNumber: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 14,
+    color: "#fff",
+    opacity: 0.9,
+  },
   menuContainer: {
     padding: 20,
-    gap: 16,
+    paddingTop: 0,
   },
   menuItem: {
     padding: 24,
     borderRadius: 16,
-    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
     elevation: 3,
   },
   menuIcone: {
@@ -56,7 +89,6 @@ export const styles = StyleSheet.create({
   },
   logoutButton: {
     margin: 20,
-    marginTop: 32,
     padding: 16,
     backgroundColor: "#fff",
     borderRadius: 12,

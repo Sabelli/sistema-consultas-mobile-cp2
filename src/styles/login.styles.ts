@@ -1,70 +1,124 @@
 import { StyleSheet } from "react-native";
 
-export const loginStyles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center", // Centraliza o card de login na tela
-    padding: 20,
+    backgroundColor: "#79059C",
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   content: {
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    padding: 30,
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    // Sombra para dar profundidade
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    padding: 32,
   },
   icone: {
-    fontSize: 50,
-    marginBottom: 15,
+    fontSize: 80,
+    marginBottom: 24,
   },
   titulo: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#1976D2",
-    marginBottom: 5,
+    color: "#fff",
+    marginBottom: 8,
   },
   subtitulo: {
     fontSize: 16,
-    color: "#757575",
-    marginBottom: 35,
-    textAlign: "center",
+    color: "#fff",
+    opacity: 0.9,
+    marginBottom: 32,
   },
-  botoesContainer: {
+  formContainer: {
     width: "100%",
+    gap: 16,
+  },
+  input: {
+    backgroundColor: "#fff",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    fontSize: 16,
+    color: "#333",
   },
   botao: {
-    width: "100%",
-    height: 55,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 12,
-    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 15,
   },
   botaoPrimario: {
-    backgroundColor: "#2196F3", // Azul vibrante para ação principal
+    backgroundColor: "#fff",
+    marginTop: 8,
   },
   botaoSecundario: {
-    backgroundColor: "#455A64", // Cinza azulado para diferenciar o Admin
-  },
-  botaoTerciario: {
     backgroundColor: "transparent",
-    marginTop: 5,
+    borderWidth: 2,
+    borderColor: "#fff",
   },
   botaoTexto: {
-    color: "#ffffff",
-    fontSize: 16,
+    color: "#79059C",
     fontWeight: "bold",
+    fontSize: 16,
   },
   botaoTextoSecundario: {
-    color: "#2196F3",
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-    fontWeight: "600",
-    textDecorationLine: "underline", // Estilo de link para criação de conta
+  },
+  credenciaisContainer: {
+    marginTop: 32,
+    width: "100%",
+  },
+  credenciaisTitulo: {
+    color: "#fff",
+    fontSize: 14,
+    textAlign: "center",
+    opacity: 0.8,
+  },
+  credenciaisLista: {
+    marginTop: 16,
+    gap: 12,
+  },
+  credencialItem: {
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  credencialTipo: {
+    color: "#fff",
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  credencialTexto: {
+    color: "#fff",
+    fontSize: 12,
+    opacity: 0.9,
+  },
+  botaoDebug: {
+    marginTop: 16,
+    backgroundColor: "rgba(255, 0, 0, 0.3)",
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255, 0, 0, 0.5)",
+    alignItems: "center",
+  },
+  botaoDebugPerigoso: {
+    marginTop: 12,
+    backgroundColor: "rgba(139, 0, 0, 0.6)",
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#ff0000",
+    alignItems: "center",
+  },
+  botaoDebugTexto: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
